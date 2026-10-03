@@ -1,7 +1,4 @@
-#include <cmath>
-#include <iostream>
-
-#include "tgaimage.h"
+#include "config.h"
 
 constexpr TGAColor white   = {255, 255, 255, 255}; // attention, BGRA order
 constexpr TGAColor green   = {  0, 255,   0, 255};
@@ -28,21 +25,26 @@ void line(Point& a, Point& b, TGAImage& framebuffer, TGAColor color) {
         std::swap(x0, x1);
         std::swap(y0, y1);
     }
-    float t = 0.0f;
-    int y = 0;
+
+    int y = y0;
+    const int dy = y1 - y0;
+    const int dx = x1 - x0;
+    const int yStep = (y0 < y1) ? 1 : -1;
+    int error = 0.5 * dx;
 
     for (int x = x0; x <= x1; x++) {
         // x(t) = (1 - t)x0 + tx1
         // x = x0 - tx0 + tx1
         // t = x - x0 / x1 - x0
-        t = (x - x0) / static_cast<float>(x1 - x0);
-        y = std::round(y0 + t*(y1 - y0));
         // std::cout << "x: " << x << " y: " << y << " t: " << t << std::endl;
         if (steep){
             framebuffer.set(y, x, color);
         } else {
             framebuffer.set(x, y, color);
         }
+        error -= dy;
+        y += (yStep * (error < 0));
+        error += dx * (error < 0);
     }
 }
 
@@ -51,15 +53,28 @@ int main(int argc, char** argv) {
     constexpr int height = 640;
     TGAImage framebuffer(width, height, TGAImage::RGB);
 
-    Point pointA {100,100};
-    Point pointB {500,100};
-    Point pointC {200,500};
+    std::ifstream file ("obj/diablo3_pose/diable3_pose.obj");
+    std::string line;
 
-    line(pointA, pointB, framebuffer, white);
-    line(pointB, pointC, framebuffer, blue);
-    line(pointC, pointA, framebuffer, red);
+    if (!file.is_open()) {
+        std::cout << "Couldn't open file" << std::endl;
+        return 0;
+    }
 
+    while(getline(file, line)) {
+        std::vector<std::string> words = split(line, " ");
+        
+        if (words[0] == "v") {
+            
+        } else if (words[0] == "f") {
+
+        }
+    }
+
+    file.close();
+    
     framebuffer.write_tga_file("framebuffer.tga");
+
     return 0;
 }
 
