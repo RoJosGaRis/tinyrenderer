@@ -9,7 +9,7 @@ public:
 private:
   std::vector<std::array<float, 3>> vectors;
   std::vector<std::array<int, 3>> faces;
-  TGAImage frameBuffer;
+  TGAImage& frameBuffer;
   TGAColor color;
   bool read_vector(const std::vector<std::string>& words);
   bool read_face(const std::vector<std::string>& words);

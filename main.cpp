@@ -1,11 +1,11 @@
 #include "config.h"
+#include "draw_component.h"
 
 int main(int argc, char** argv) {
-    constexpr int width  = 640;
-    constexpr int height = 640;
-    TGAImage framebuffer(width, height, TGAImage::RGB);
+    TGAImage framebuffer(WIDTH, HEIGHT, TGAImage::RGB);
 
-    
+    DrawComponent drawComponet(framebuffer);
+    drawComponet.draw_obj("../obj/diablo3_pose/diablo3_pose.obj", white);    
     
     framebuffer.write_tga_file("framebuffer.tga");
 
