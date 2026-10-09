@@ -5,7 +5,7 @@ int main(int argc, char** argv) {
     TGAImage framebuffer(WIDTH, HEIGHT, TGAImage::RGB);
 
     DrawComponent drawComponet(framebuffer);
-    drawComponet.draw_obj("../obj/diablo3_pose/diablo3_pose.obj", white);    
+    drawComponet.draw_obj("../obj/diablo3_pose/diablo3_pose.obj", red);    
     
     framebuffer.write_tga_file("framebuffer.tga");
 
