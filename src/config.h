@@ -3,8 +3,11 @@
 #include <iostream>
 #include <ctime>
 #include <chrono>
+#include <array>
+#include <string>
 
-#include "tgaimage.h"
+#include "io/tgaimage.h"
+#include "core/model.h"
 
 std::vector<std::string> split(std::string line, std::string delimiter);
 

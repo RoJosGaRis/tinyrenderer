@@ -22,10 +22,12 @@ endif()
 find_package(OpenMP COMPONENTS CXX)
 
 set(SOURCES 
-main.cpp 
-tgaimage.cpp 
-config.cpp
-draw_component.cpp
+src/config.cpp
+src/app/main.cpp 
+src/core/model.cpp
+src/io/tgaimage.cpp 
+src/io/object_reader.cpp
+src/render/rasterizer.cpp
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES})
