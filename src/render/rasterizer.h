@@ -5,6 +5,7 @@ class Rasterizer {
 public:
   Rasterizer(TGAImage& frameBuffer) : frameBuffer(frameBuffer) {}
   void draw_obj(Model* model, const TGAColor& color);
+  bool draw_triangle(Point& a, Point& b, Point& c);
 
 private:
   
