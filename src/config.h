@@ -16,8 +16,8 @@ constexpr TGAColor green   = {  0, 255,   0, 255};
 constexpr TGAColor red     = {  0,   0, 255, 255};
 constexpr TGAColor blue    = {255, 128,  64, 255};
 constexpr TGAColor yellow  = {  0, 200, 255, 255};
-constexpr int HEIGHT = 320;
-constexpr int WIDTH = 320;
+constexpr int HEIGHT = 1280;
+constexpr int WIDTH = 1280;
 
 struct Point {
     int x;

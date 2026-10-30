@@ -39,84 +39,36 @@ bool Rasterizer::draw_line(Point& a, Point& b) {
 
     return true;
 }
+
+double get_signed_area_triangle(const int& ax, const int& ay, const int& bx, const int& by, const int& cx, const int& cy) {
+  return 0.5*((by - ay)*(bx + ax) + (cy - by)*(cx + bx) + (ay - cy)*(ax + cx));
+}
+
 bool Rasterizer::draw_triangle(Point& a, Point& b, Point& c) {  
 
-    int ax = a.x;
-    int ay = a.y;
-    int bx = b.x;
-    int by = b.y;
-    int cx = c.x;
-    int cy = c.y;
+    const int ax = a.x;
+    const int ay = a.y;
+    const int bx = b.x;
+    const int by = b.y;
+    const int cx = c.x;
+    const int cy = c.y;
 
-    if (ax > bx) {
-      std::swap(ax, bx);
-      std::swap(ay, by);
+    const int maxX = std::max(ax, bx, cx);
+    const int maxY = std::max(ay, by, cy);
+    const int minX = std::min(ax, bx, cx);
+    const int minY = std::min(ay, by, cy);
+
+    const double totalArea = get_signed_area_triangle(ax, ay, bx, by, cx, cy);
+
+    #pragma omp parallel for
+    for (int x = minX; x <= maxX; x++) {
+      for (int y = minY; y <= maxY; y++) {
+        double first = get_signed_area_triangle(x, y, bx, by, cx, cy);
+        double second = get_signed_area_triangle(ax, ay, x, y, cx, cy);
+        double third = get_signed_area_triangle(ax, ay, bx, by, x, y);
+      }
     }
-    
-    if (ax > cx) {
-      std::swap(ax, cx);
-      std::swap(ay, cy);
-    }
-
-    if (bx > cx) {
-      std::swap(bx, cx);
-      std::swap(by, cy);
-    }
-
-    int yAB = ay;
-    const int dyAB = std::abs(by - ay);
-    const int dxAB = bx - ax;
-    const int yStepAB = (ay < by) ? (dyAB / dxAB) : -(dyAB / dxAB);
-    int errorAB = 0.5 * dxAB;
-
-    int yAC = ay;
-    const int dyAC = std::abs(cy - ay);
-    const int dxAC = cx - ax;
-    const int yStepAC = (ay < cy) ? (dyAC / dxAC) : -(dyAC / dxAC);
-    int errorAC = 0.5 * dxAC;
-    
-    int yBC = by;
-    const int dyBC = std::abs(cy - by);
-    const int dxBC = cx - bx;
-    const int yStepBC = (by < cy) ? (dyBC / dxBC) : -(dyBC / dxBC);
-    int errorBC = 0.5 * dxBC;
-
-    for (int x = ax; x < bx; x++) {
-        // x(t) = (1 - t)x0 + tx1
-        // x = x0 - tx0 + tx1
-        // t = x - x0 / x1 - x0
-        // std::cout << "x: " << x << " y: " << y << " t: " << t << std::endl;
-        for (int col = std::min(yAB, yAC); col <= std::max(yAC, yAB); col++) {
-          frameBuffer.set(x, col, color);
-        }
-
-        errorAB -= dyAB;
-        yAB += (yStepAB * (errorAB < 0));
-        errorAB += dxAB * (errorAB < 0);
-        
-        errorAC -= dyAC;
-        yAC += (yStepAC * (errorAC < 0));
-        errorAC += dxAC * (errorAC < 0);
-    }
-
-    for (int x = bx; x <= cx; x++) {
-        // x(t) = (1 - t)x0 + tx1
-        // x = x0 - tx0 + tx1
-        // t = x - x0 / x1 - x0
-        // std::cout << "x: " << x << " y: " << y << " t: " << t << std::endl;
-        for (int col = std::min(yBC, yAC); col <= std::max(yAC, yBC); col++) {
-          frameBuffer.set(x, col, blue);
-        }
-
-        errorBC -= dyBC;
-        yBC += (yStepBC * (errorBC < 0));
-        errorBC += dxBC * (errorBC < 0);
-        
-        errorAC -= dyAC;
-        yAC += (yStepAC * (errorAC < 0));
-        errorAC += dxAC * (errorAC < 0);
-    }
-
+      
     return true;
 }
 int orth_view(float val) {
